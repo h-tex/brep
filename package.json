@@ -1,6 +1,6 @@
 {
   "name": "brep",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Create scripts that transform files en masse with a simple declarative syntax based on a series of find & replace operations",
   "main": "src/brep.js",
   "type": "module",
