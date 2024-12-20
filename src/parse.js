@@ -8,10 +8,10 @@ let formats = {
 	json: JSON,
 };
 
-export const parsers = {toml, yaml, JSON};
+export const parsers = {JSON, toml, yaml};
 
 export default function parse (script, format = "toml") {
-	let parser = formats[format] ?? toml;
+	let parser = formats[format.toLowerCase()] ?? toml;
 
 	try {
 		script = parser.parse(script);

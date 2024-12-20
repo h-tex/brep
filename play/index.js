@@ -1,4 +1,4 @@
-import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.prod.js'
 import parse, { parsers } from "../src/parse.js";
 import Replacer from "../src/replacer.js";
 
@@ -24,13 +24,6 @@ globalThis.app = createApp({
 	computed: {
 		script () {
 			let formats = Object.keys(parsers);
-
-			if (this.format) {
-				let index = formats.indexOf(this.format);
-				formats.splice(index, 1);
-				formats.unshift(this.format);
-			}
-
 			for (let format of formats) {
 				try {
 					let script = parse(this.scriptRaw, format);
@@ -42,9 +35,10 @@ globalThis.app = createApp({
 				catch (e) {}
 			}
 
-			let errorMessage = `Cannot parse script as any of the supported formats (${ Object.keys(parsers).join(", ") })`;
+			let errorMessage = `Cannot parse script as any of the supported formats (${ formats.join(", ") })`;
 			this.$refs.script?.setCustomValidity(errorMessage);
 			this.$refs.script?.reportValidity();
+			this.format = undefined;
 			// throw new Error(errorMessage);
 		},
 
