@@ -13,6 +13,8 @@
 		"./replacer": "./src/replacer.js"
 	},
 	"scripts": {
+		"build:apidocs": "npx typedoc",
+		"build": "npm run build:apidocs",
 		"test": "npx htest test/index.js",
 		"release": "release-it"
 	},
@@ -40,6 +42,8 @@
 		"prettier-plugin-brace-style": "^0.7.2",
 		"prettier-plugin-merge": "^0.7.3",
 		"prettier-plugin-space-before-function-paren": "^0.0.7",
-		"release-it": "^18.1.2"
+		"release-it": "^18.1.2",
+		"typedoc": "^0.28.2",
+		"typedoc-plugin-rename-defaults": "^0.7.3"
 	}
 }

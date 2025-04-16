@@ -1,0 +1,20 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"out": "./api",
+	"json": "./api/docs.json",
+	"name": "brep (Batch REPlace) API",
+	"includeVersion": true,
+	"entryPoints": ["src/**/*.js"],
+	"markdownItOptions": {
+		"html": true,
+		"linkify": true,
+		"typographer": true
+	},
+	"plugin": ["typedoc-plugin-rename-defaults"],
+	"navigationLinks": {
+		"Home": "https://brep.htex.app",
+		"GitHub": "https://github.com/h-tex/brep"
+	},
+	"hostedBaseUrl": "https://brep.htex.app/api",
+	"readme": "none"
+}
