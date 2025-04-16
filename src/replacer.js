@@ -1,7 +1,4 @@
-import {
-	resolveReplacementArgs,
-	emulateStringReplacement,
-} from "./util.js"
+import { resolveReplacementArgs, emulateStringReplacement } from "./util.js";
 
 export const fromRegexp = Symbol("from regexp");
 const nonword = "[^_\\p{L}\\p{N}]";
@@ -14,7 +11,7 @@ export default class Replacer {
 		if (Array.isArray(script)) {
 			// Convert [from, to] shorthand syntax to object
 			let [from, to] = script;
-			script = {from, to};
+			script = { from, to };
 
 			if (parent) {
 				// Inherit settings from parent
@@ -38,17 +35,18 @@ export default class Replacer {
 	 */
 	compile () {
 		let { from, before, after, regexp, ignore_case, whole_word } = this;
-		let createRegexp = regexp || before || after || ignore_case || whole_word || Array.isArray(from);
+		let createRegexp =
+			regexp || before || after || ignore_case || whole_word || Array.isArray(from);
 		let isReplacement = Boolean(from || before || after);
 
 		if (createRegexp && isReplacement) {
 			let flags = "gmvs" + (ignore_case ? "i" : "");
 			let pattern = [
-				after  ? partialRegexp(after, {regexp, group: "?<=" })  : "",
-				whole_word ? `(?:^|(?=${ nonword })|(?<=${ nonword }))` : "",
-				from   ? partialRegexp(from, {regexp, group: Array.isArray(from) }) : "",
-				whole_word ? `(?:$|(?=${ nonword })|(?<=${ nonword }))` : "",
-				before ? partialRegexp(before, {regexp, group: "?="}) : "",
+				after ? partialRegexp(after, { regexp, group: "?<=" }) : "",
+				whole_word ? `(?:^|(?=${nonword})|(?<=${nonword}))` : "",
+				from ? partialRegexp(from, { regexp, group: Array.isArray(from) }) : "",
+				whole_word ? `(?:$|(?=${nonword})|(?<=${nonword}))` : "",
+				before ? partialRegexp(before, { regexp, group: "?=" }) : "",
 			].join("");
 
 			if (pattern) {
@@ -63,7 +61,7 @@ export default class Replacer {
 	 * @returns {boolean}
 	 */
 	transform (content, options) {
-		if (!content || options?.filter && !options.filter(this)) {
+		if (!content || (options?.filter && !options.filter(this))) {
 			// Skip
 			return content;
 		}
@@ -80,34 +78,40 @@ export default class Replacer {
 				if (from) {
 					let simpleTo = typeof to !== "function" && !this.literal && !this.replace;
 					if (to !== undefined || this.replace) {
-						content = content.replaceAll(from, simpleTo ? to : (...args) => {
-							let resolvedArgs = resolveReplacementArgs(args);
-							let ret = resolvedArgs.match; // no change if no to
-							to = this.to ?? this.insert;
+						content = content.replaceAll(
+							from,
+							simpleTo
+								? to
+								: (...args) => {
+										let resolvedArgs = resolveReplacementArgs(args);
+										let ret = resolvedArgs.match; // no change if no to
+										to = this.to ?? this.insert;
 
-							if (to !== undefined) {
-								if (typeof to === "function") {
-									ret = to.call(this, ret, resolvedArgs);
-								}
-								else {
-									// Replace special replacement patterns
-									ret = this.literal ? to : emulateStringReplacement(resolvedArgs, to);
-								}
-							}
+										if (to !== undefined) {
+											if (typeof to === "function") {
+												ret = to.call(this, ret, resolvedArgs);
+											}
+											else {
+												// Replace special replacement patterns
+												ret = this.literal
+													? to
+													: emulateStringReplacement(resolvedArgs, to);
+											}
+										}
 
-							if (this.replace) {
-								// Child replacements
-								for (let replacement of this.replace) {
-									ret = replacement.transform(ret, options);
-								}
-							}
+										if (this.replace) {
+											// Child replacements
+											for (let replacement of this.replace) {
+												ret = replacement.transform(ret, options);
+											}
+										}
 
-							return ret;
-						});
+										return ret;
+									},
+						);
 					}
 				}
-			}
-			while (this.recursive && prevContent !== content && content);
+			} while (this.recursive && prevContent !== content && content);
 		}
 		else if (this.replace) {
 			for (let replacement of this.replace) {
@@ -119,12 +123,12 @@ export default class Replacer {
 	}
 }
 
-function escapeRegExp(str) {
-	return str?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function escapeRegExp (str) {
+	return str?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function partialRegexp (text, o = {}) {
-	let {regexp, group} = o;
+	let { regexp, group } = o;
 
 	if (Array.isArray(text)) {
 		text = text.map(t => partialRegexp(t, o)).join("|");

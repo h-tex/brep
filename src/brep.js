@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import parse from "./parse.js";
-import {globby} from "globby";
+import { globby } from "globby";
 import Replacer from "./replacer.js";
 import { applyDefaults, toArray } from "./util.js";
 import { resolvePath } from "./util-node.js";
@@ -75,27 +75,27 @@ export default class Brep {
 	async file (inputPath, outputPath = this.getOutputPath(inputPath), options) {
 		let originalContent = await fs.promises.readFile(inputPath, "utf-8");
 		let content = this.text(originalContent, {
-			filter: (replacement) => {
+			filter: replacement => {
 				if (replacement.files && replacement !== this.script) {
 					// Test path against files criteria
 					return toArray(replacement.files).some(file => inputPath.includes(file));
 				}
 
 				return true;
-			}
+			},
 		});
 
 		let changed = content !== originalContent;
 
 		if (changed) {
 			if (this.options.dryRun) {
-				console.info(`Would have written this to ${ outputPath }:\n`, content);
+				console.info(`Would have written this to ${outputPath}:\n`, content);
 			}
 			else {
 				await fs.promises.writeFile(outputPath, content, "utf-8");
 
 				if (this.options.verbose) {
-					console.info(`Written ${ outputPath } successfully`);
+					console.info(`Written ${outputPath} successfully`);
 				}
 			}
 		}
@@ -112,16 +112,19 @@ export default class Brep {
 		let changed = new Set();
 		let intact = new Set();
 		let start = performance.now();
-		let pathsChanged = Promise.all(paths.map(path => this.file(path).then(fileChanged => {
-				if (fileChanged) {
-					changed.add(path);
-				}
-				else {
-					intact.add(path);
-				}
+		let pathsChanged = Promise.all(
+			paths.map(path =>
+				this.file(path).then(fileChanged => {
+					if (fileChanged) {
+						changed.add(path);
+					}
+					else {
+						intact.add(path);
+					}
 
-				return fileChanged;
-			})));
+					return fileChanged;
+				})),
+		);
 
 		return {
 			start,
@@ -137,19 +140,25 @@ export default class Brep {
 	 */
 	async glob (glob = this.getFiles()) {
 		if (!glob) {
-			console.warn(`[brep] No paths specified. Please specify a file path or glob either in the replacement script or as a second argument`);
+			console.warn(
+				`[brep] No paths specified. Please specify a file path or glob either in the replacement script or as a second argument`,
+			);
 			return;
 		}
 
 		let paths = await globby(glob);
 
 		if (paths.length === 0) {
-			console.warn(`${ glob } matched no files. The current working directory (CWD) was: ${ process.cwd() }`);
+			console.warn(
+				`${glob} matched no files. The current working directory (CWD) was: ${process.cwd()}`,
+			);
 			return;
 		}
 
 		if (this.options.verbose) {
-			console.info(`Found ${ paths.length } files: ${ paths.slice(0, 10).join(", ") + (paths.length > 10 ? "..." : "") }`);
+			console.info(
+				`Found ${paths.length} files: ${paths.slice(0, 10).join(", ") + (paths.length > 10 ? "..." : "")}`,
+			);
 		}
 
 		let ret = this.files(paths);
@@ -174,7 +183,9 @@ export default class Brep {
 			console.log(inputPath);
 			// Get import path relative to CWD
 
-			let importPath = path.isAbsolute(inputPath) ? inputPath : path.resolve(process.cwd(), inputPath);
+			let importPath = path.isAbsolute(inputPath)
+				? inputPath
+				: path.resolve(process.cwd(), inputPath);
 			script = await import(importPath).then(module => module.default ?? module);
 		}
 		else {
@@ -182,7 +193,7 @@ export default class Brep {
 				script = fs.readFileSync(inputPath, "utf-8");
 			}
 			catch (error) {
-				throw new Error(`Failed to read script file: ${ error.message }`);
+				throw new Error(`Failed to read script file: ${error.message}`);
 			}
 
 			script = parse(script, format);

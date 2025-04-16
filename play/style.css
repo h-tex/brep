@@ -10,14 +10,14 @@ textarea:invalid {
 
 body {
 	display: grid;
-	gap: .5rem;
+	gap: 0.5rem;
 	min-height: 100vh;
 	box-sizing: border-box;
 	margin: 0;
 	padding: 1em;
 
 	@media (width > 500px) {
-		grid-template-columns: .5fr repeat(2, 1fr);
+		grid-template-columns: 0.5fr repeat(2, 1fr);
 		grid-template-rows: auto 1fr;
 	}
 
@@ -36,7 +36,8 @@ body {
 }
 
 body > header {
-	h1, p {
+	h1,
+	p {
 		margin: 0;
 	}
 }
@@ -53,5 +54,5 @@ body > section {
 
 .format {
 	font-weight: normal;
-	margin-left: .4em;
+	margin-left: 0.4em;
 }

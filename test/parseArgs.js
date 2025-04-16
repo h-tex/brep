@@ -51,5 +51,5 @@ export default {
 				file: "foo",
 			},
 		},
-	]
-}
+	],
+};

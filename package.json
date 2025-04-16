@@ -1,38 +1,45 @@
 {
-  "name": "brep",
-  "version": "0.0.10",
-  "description": "Create scripts that transform files en masse with a simple declarative syntax based on a series of find & replace operations",
-  "main": "src/brep.js",
-  "type": "module",
-  "bin": {
-    "brep": "bin/brep.js"
-  },
-  "exports": {
-    ".": "./src/brep.js",
-    "./cli": "./src/cli.js",
-    "./replacer": "./src/replacer.js"
-  },
-  "scripts": {
-    "test": "npx htest test/index.js",
-    "release": "release-it"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/leaverou/brep.git"
-  },
-  "keywords": [
-    "find",
-    "replace"
-  ],
-  "author": "Lea Verou",
-  "license": "MIT",
-  "dependencies": {
-    "globby": "^14.0.2",
-    "smol-toml": "^1.3.0",
-    "yaml": "^2.4.5"
-  },
-  "devDependencies": {
-    "htest.dev": "^0.0.15",
-    "release-it": "^17.6.0"
-  }
+	"name": "brep",
+	"version": "0.0.10",
+	"description": "Create scripts that transform files en masse with a simple declarative syntax based on a series of find & replace operations",
+	"main": "src/brep.js",
+	"type": "module",
+	"bin": {
+		"brep": "bin/brep.js"
+	},
+	"exports": {
+		".": "./src/brep.js",
+		"./cli": "./src/cli.js",
+		"./replacer": "./src/replacer.js"
+	},
+	"scripts": {
+		"test": "npx htest test/index.js",
+		"release": "release-it"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/h-tex/brep.git"
+	},
+	"bugs": {
+		"url": "https://github.com/h-tex/brep/issues"
+	},
+	"keywords": [
+		"find",
+		"replace"
+	],
+	"author": "Lea Verou",
+	"license": "MIT",
+	"dependencies": {
+		"globby": "^14.0.2",
+		"smol-toml": "^1.3.0",
+		"yaml": "^2.4.5"
+	},
+	"devDependencies": {
+		"htest.dev": "^0.0.17",
+		"prettier": "^3.5.3",
+		"prettier-plugin-brace-style": "^0.7.2",
+		"prettier-plugin-merge": "^0.7.3",
+		"prettier-plugin-space-before-function-paren": "^0.0.7",
+		"release-it": "^18.1.2"
+	}
 }

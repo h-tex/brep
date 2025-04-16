@@ -18,8 +18,8 @@ export default async function cli (script, options) {
 	}
 
 	if (options?.version) {
-		let version = (await import("../package.json", {with: {type: "json"}})).default.version;
-		console.info(`Brep v${ version }`);
+		let version = (await import("../package.json", { with: { type: "json" } })).default.version;
+		console.info(`Brep v${version}`);
 		return;
 	}
 
@@ -40,7 +40,7 @@ export default async function cli (script, options) {
 	outcome.totalTimeTaken = performance.now() - start;
 
 	if (!brep.options.quiet) {
-		console.info(message, `(total time: ${ util.formatTimeTaken(outcome.totalTimeTaken) })`);
+		console.info(message, `(total time: ${util.formatTimeTaken(outcome.totalTimeTaken)})`);
 	}
 
 	return outcome;

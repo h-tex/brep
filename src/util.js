@@ -8,12 +8,12 @@ export function applyDefaults (options, defaults) {
  * @param {*} defaults
  * @returns {object}
  */
-export function parseArgs (argv = process.argv, {
-	short = {v: "version"},
-	boolean = new Set(["version"])
-} = {}) {
+export function parseArgs (
+	argv = process.argv,
+	{ short = { v: "version" }, boolean = new Set(["version"]) } = {},
+) {
 	argv = argv.slice(2);
-	let ret = {positional: []};
+	let ret = { positional: [] };
 	let openFlag = false;
 
 	for (let arg of argv) {
@@ -49,16 +49,17 @@ export function parseArgs (argv = process.argv, {
 	return ret;
 }
 
-export function serializeOutcome ({paths, changed, intact, timeTaken}) {
+export function serializeOutcome ({ paths, changed, intact, timeTaken }) {
 	let one = paths.length === 1;
-	let files = `${ paths.length } file${ one ? "" : "s" }`;
-	let changedFiles = `${ intact.size === 0 ? (one ? "it" : "all of them ") : (changed.size || "none") }`
+	let files = `${paths.length} file${one ? "" : "s"}`;
+	let changedFiles = `${intact.size === 0 ? (one ? "it" : "all of them ") : changed.size || "none"}`;
 
-	return `Processed ${ files } and changed ${ changedFiles } in ${ formatTimeTaken(timeTaken) }.`
+	return `Processed ${files} and changed ${changedFiles} in ${formatTimeTaken(timeTaken)}.`;
 }
 
 export function formatTimeTaken (ms) {
-	let n = ms, unit = "ms";
+	let n = ms,
+		unit = "ms";
 	if (n >= 1000) {
 		n /= 1000;
 		unit = "s";
@@ -69,7 +70,7 @@ export function formatTimeTaken (ms) {
 		}
 	}
 
-	return `${ n.toPrecision(3) } ${ unit }`;
+	return `${n.toPrecision(3)} ${unit}`;
 }
 
 /**
@@ -107,14 +108,18 @@ export function emulateStringReplacement (args, to) {
 		return to;
 	}
 
-	let {match, groups, string, index, cgroups} = args;
+	let { match, groups, string, index, cgroups } = args;
 
 	return to.replaceAll(/\$(\$|\d+|&|`|'|<(.+?)>)/g, (m, type, groupName) => {
 		switch (type) {
-			case "&": return match;
-			case "$": return "$";
-			case "`": return string.slice(0, index);
-			case "'": return string.slice(index + match.length);
+			case "&":
+				return match;
+			case "$":
+				return "$";
+			case "`":
+				return string.slice(0, index);
+			case "'":
+				return string.slice(index + match.length);
 		}
 
 		if (type > 0 && cgroups.length >= type) {

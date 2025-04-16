@@ -1,12 +1,16 @@
-import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.prod.js'
+import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.prod.js";
 import parse, { parsers } from "../src/parse.js";
 import Replacer from "../src/replacer.js";
 
-let scriptRaw = localStorage.scriptRaw ?? `regexp: true
+let scriptRaw =
+	localStorage.scriptRaw ??
+	`regexp: true
 from: foo+
 to: bar`;
 
-let input = localStorage.input ?? `Foo bar
+let input =
+	localStorage.input ??
+	`Foo bar
 foo
 foooooo
 baz`;
@@ -35,7 +39,7 @@ globalThis.app = createApp({
 				catch (e) {}
 			}
 
-			let errorMessage = `Cannot parse script as any of the supported formats (${ formats.join(", ") })`;
+			let errorMessage = `Cannot parse script as any of the supported formats (${formats.join(", ")})`;
 			this.$refs.script?.setCustomValidity(errorMessage);
 			this.$refs.script?.reportValidity();
 			this.format = undefined;
@@ -59,5 +63,5 @@ globalThis.app = createApp({
 		input (value) {
 			localStorage.input = value;
 		},
-	}
+	},
 }).mount(document.body);

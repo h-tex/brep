@@ -4,11 +4,11 @@ import yaml from "yaml";
 let formats = {
 	toml,
 	yaml,
-	"yml": yaml,
+	yml: yaml,
 	json: JSON,
 };
 
-export const parsers = {JSON, toml, yaml};
+export const parsers = { JSON, toml, yaml };
 
 export default function parse (script, format = "toml") {
 	let parser = formats[format.toLowerCase()] ?? toml;

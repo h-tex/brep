@@ -1,47 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Brep Play</title>
-	<link rel="stylesheet" href="style.css">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Brep Play</title>
+		<link rel="stylesheet" href="style.css" />
 
-	<script type="importmap">
-		{
-			"imports": {
-				"yaml": "https://esm.sh/yaml",
-				"smol-toml": "https://esm.sh/smol-toml"
+		<script type="importmap">
+			{
+				"imports": {
+					"yaml": "https://esm.sh/yaml",
+					"smol-toml": "https://esm.sh/smol-toml"
+				}
 			}
-		}
-	</script>
-	<script type="module" src="index.js"></script>
-</head>
-<body>
-	<header>
-		<h1>Brep Online demo</h1>
-	</header>
-	<section>
-		<h2>
-			<label for="script">Script</label>
-			<span class="format" v-if="format">(detected: {{ format }})</span>
-		</h2>
-		<textarea id="script" v-model="scriptRaw" ref="script"></textarea>
-		<details v-if="format && format != 'JSON'">
-			<summary>JSON</summary>
-			<pre><code>{{ JSON.stringify(script, null, '\t') }}</code></pre>
-		</details>
-	</section>
-	<section>
-		<h2>
-			<label for="input">Input</label>
-		</h2>
-		<textarea id="input" v-model="input"></textarea>
-	</section>
-	<section>
-		<h2>
-			<label for="result">Result</label>
-		</h2>
-		<textarea id="result" readonly v-model="result"></textarea>
-	</section>
-</body>
+		</script>
+		<script type="module" src="index.js"></script>
+	</head>
+	<body>
+		<header>
+			<h1>Brep Online demo</h1>
+		</header>
+		<section>
+			<h2>
+				<label for="script">Script</label>
+				<span class="format" v-if="format">(detected: {{ format }})</span>
+			</h2>
+			<textarea id="script" v-model="scriptRaw" ref="script"></textarea>
+			<details v-if="format && format != 'JSON'">
+				<summary>JSON</summary>
+				<pre><code>{{ JSON.stringify(script, null, '\t') }}</code></pre>
+			</details>
+		</section>
+		<section>
+			<h2>
+				<label for="input">Input</label>
+			</h2>
+			<textarea id="input" v-model="input"></textarea>
+		</section>
+		<section>
+			<h2>
+				<label for="result">Result</label>
+			</h2>
+			<textarea id="result" readonly v-model="result"></textarea>
+		</section>
+	</body>
 </html>
