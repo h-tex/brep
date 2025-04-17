@@ -4,17 +4,28 @@
 	"description": "Create scripts that transform files en masse with a simple declarative syntax based on a series of find & replace operations",
 	"main": "src/brep.js",
 	"type": "module",
+	"types": "./types/brep.d.ts",
 	"bin": {
 		"brep": "bin/brep.js"
 	},
 	"exports": {
-		".": "./src/brep.js",
-		"./cli": "./src/cli.js",
-		"./replacer": "./src/replacer.js"
+		".": {
+			"types": "./types/brep.d.ts",
+			"default": "./src/brep.js"
+		},
+		"./cli": {
+			"types": "./types/cli.d.ts",
+			"default": "./src/cli.js"
+		},
+		"./replacer": {
+			"types": "./types/replacer.d.ts",
+			"default": "./src/replacer.js"
+		}
 	},
 	"scripts": {
 		"build:apidocs": "npx typedoc",
-		"build": "npm run build:apidocs",
+		"build:types": "tsc --allowJs --emitDeclarationOnly --skipLibCheck --module ESNext --moduleResolution bundler --declaration src/brep.js --outDir types",
+		"build": "npm run build:apidocs && npm run build:types",
 		"test": "npx htest test/index.js",
 		"release": "release-it"
 	},
@@ -44,6 +55,7 @@
 		"prettier-plugin-space-before-function-paren": "^0.0.7",
 		"release-it": "^18.1.2",
 		"typedoc": "^0.28.2",
-		"typedoc-plugin-rename-defaults": "^0.7.3"
+		"typedoc-plugin-rename-defaults": "^0.7.3",
+		"typescript": "^5.8.3"
 	}
 }
