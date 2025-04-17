@@ -6,12 +6,12 @@ import { resolvePath } from "./util-node.js";
 
 /**
  * @typedef {Object} BrepOutcome
- * @property {string[]} paths? - Array of file paths that were processed
- * @property {Promise<Brep(boolean | undefined)[]} changed - Resolves to an array of booleans indicating whether each file was changed, or undefined if reading the file failed.
+ * @property {string[]} [paths] - Array of file paths that were processed.
+ * @property {Promise<(boolean | undefined)[]>} changed - Resolves to an array of booleans indicating whether each file was changed, or undefined if reading the file failed.
  * @property {Set<string>} changed - Set of files that were changed, updates as each file is processed.
  * @property {Set<string>} intact - Set of files that were not changed, updates as each file is processed.
- * @property {number} start - Time when the processing started
- * @property {Promise<number>} timeTaken - Promise that resolves to the time taken in milliseconds, once all files have been processed
+ * @property {number} start - Time when the processing started.
+ * @property {Promise<number>} timeTaken - Promise that resolves to the time taken in milliseconds, once all files have been processed.
  */
 
 export default class Brep {
@@ -120,7 +120,7 @@ export default class Brep {
 		let changed = new Set();
 		let intact = new Set();
 		let start = performance.now();
-		let ret =  {
+		let ret = {
 			paths,
 			start,
 			timeTaken: pathsChanged.then(() => performance.now() - start),
