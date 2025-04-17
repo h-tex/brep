@@ -1,4 +1,4 @@
-import { resolveReplacementArgs, emulateStringReplacement } from "./util.js";
+import { resolveReplacementArgs, emulateStringReplacement, escapeRegExp, partialRegexp } from "./util.js";
 
 export const fromRegexp = Symbol("from regexp");
 const nonword = "[^_\\p{L}\\p{N}]";
@@ -121,26 +121,4 @@ export default class Replacer {
 
 		return content;
 	}
-}
-
-function escapeRegExp (str) {
-	return str?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function partialRegexp (text, o = {}) {
-	let { regexp, group } = o;
-
-	if (Array.isArray(text)) {
-		text = text.map(t => partialRegexp(t, o)).join("|");
-	}
-	else if (!regexp) {
-		text = escapeRegExp(text);
-	}
-
-	if (group) {
-		let groupType = group === true ? "?:" : group;
-		text = `(${groupType}${text})`;
-	}
-
-	return text;
 }

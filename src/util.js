@@ -136,3 +136,25 @@ export function emulateStringReplacement (args, to) {
 export function toArray (val) {
 	return Array.isArray(val) ? val : [val];
 }
+
+export function escapeRegExp (str) {
+	return str?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function partialRegexp (text, o = {}) {
+	let { regexp, group } = o;
+
+	if (Array.isArray(text)) {
+		text = text.map(t => partialRegexp(t, o)).join("|");
+	}
+	else if (!regexp) {
+		text = escapeRegExp(text);
+	}
+
+	if (group) {
+		let groupType = group === true ? "?:" : group;
+		text = `(${groupType}${text})`;
+	}
+
+	return text;
+}
