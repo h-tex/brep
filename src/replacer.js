@@ -50,7 +50,12 @@ export default class Replacer {
 			].join("");
 
 			if (pattern) {
-				this[fromRegexp] = RegExp(pattern, flags);
+				try {
+					this[fromRegexp] = RegExp(pattern, flags);
+				}
+				catch (e) {
+					console.error(`Failed to compile regular expression /${pattern}/${flags}. Original error was:`, e.message);
+				}
 			}
 		}
 	}
