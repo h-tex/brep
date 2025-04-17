@@ -120,27 +120,27 @@ export default class Brep {
 		let changed = new Set();
 		let intact = new Set();
 		let start = performance.now();
-		let pathsChanged = Promise.all(
-			paths.map(path =>
-				this.file(path).then(fileChanged => {
-					if (fileChanged) {
-						changed.add(path);
-					}
-					else {
-						intact.add(path);
-					}
-
-					return fileChanged;
-				})),
-		);
-
-		return {
+		let ret =  {
+			paths,
 			start,
-			pathsChanged,
 			timeTaken: pathsChanged.then(() => performance.now() - start),
 			changed,
 			intact,
 		};
+		let pathsChanged = paths.map(path => this.file(path).then(fileChanged => {
+			if (fileChanged) {
+				changed.add(path);
+			}
+			else {
+				intact.add(path);
+			}
+
+			return fileChanged;
+		}));
+
+		ret.changed = Promise.allSettled(pathsChanged).then(arr => arr.map(r => r.value));
+
+		return ret;
 	}
 
 	/**
@@ -172,9 +172,7 @@ export default class Brep {
 			);
 		}
 
-		let ret = this.files(paths);
-		ret.paths = paths;
-		return ret;
+		return this.files(paths);
 	}
 
 	toJSON () {
