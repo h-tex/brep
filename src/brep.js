@@ -1,8 +1,6 @@
 import fs from "fs";
-import path from "path";
-import parse from "./parse.js";
 import {globby} from "globby";
-import Replacer from "./replacer.js";
+import {Replacer, replacerFromFile} from "./replacer-from-file.js";
 import { applyDefaults, toArray } from "./util.js";
 import { resolvePath } from "./util-node.js";
 
@@ -189,29 +187,9 @@ export default class Brep {
 	};
 
 	static async fromPath (inputPath, options = {}) {
-		let script;
-		let format = options.format ?? inputPath.match(/\.([^.]+)$/)[1]; // default to get by extension
-
-		if (/\.m?js$/.test(inputPath) || format === "js") {
-			console.log(inputPath);
-			// Get import path relative to CWD
-
-			let importPath = path.isAbsolute(inputPath)
-				? inputPath
-				: path.resolve(process.cwd(), inputPath);
-			script = await import(importPath).then(module => module.default ?? module);
-		}
-		else {
-			try {
-				script = fs.readFileSync(inputPath, "utf-8");
-			}
-			catch (error) {
-				throw new Error(`Failed to read script file: ${error.message}`);
-			}
-
-			script = parse(script, format);
-		}
-
+		let script = replacerFromFile(inputPath, options);
 		return new this(script, options);
 	}
 }
+
+export {Brep, Replacer};
