@@ -1,10 +1,20 @@
 import fs from "fs";
 import path from "path";
 import parse from "./parse.js";
-import { globby } from "globby";
+import {globby} from "globby";
 import Replacer from "./replacer.js";
 import { applyDefaults, toArray } from "./util.js";
 import { resolvePath } from "./util-node.js";
+
+/**
+ * @typedef {Object} BrepOutcome
+ * @property {string[]} paths? - Array of file paths that were processed
+ * @property {Promise<Brep(boolean | undefined)[]} changed - Resolves to an array of booleans indicating whether each file was changed, or undefined if reading the file failed.
+ * @property {Set<string>} changed - Set of files that were changed, updates as each file is processed.
+ * @property {Set<string>} intact - Set of files that were not changed, updates as each file is processed.
+ * @property {number} start - Time when the processing started
+ * @property {Promise<number>} timeTaken - Promise that resolves to the time taken in milliseconds, once all files have been processed
+ */
 
 export default class Brep {
 	constructor (script, options = {}) {
@@ -38,7 +48,7 @@ export default class Brep {
 	/**
 	 * Apply the script to a string of text
 	 * @param {string} content
-	 * @returns {boolean}
+	 * @returns {string} The transformed content
 	 */
 	text (content, options) {
 		return this.script.transform(content, options);
@@ -70,7 +80,7 @@ export default class Brep {
 	/**
 	 * Apply the script to a file
 	 * @param {string} inputPath
-	 * @returns {Promise<boolean>}
+	 * @returns {Promise<boolean>} Whether the file was changed
 	 */
 	async file (inputPath, outputPath = this.getOutputPath(inputPath), options) {
 		let originalContent = await fs.promises.readFile(inputPath, "utf-8");
@@ -106,7 +116,7 @@ export default class Brep {
 	/**
 	 * Apply the script to multiple files
 	 * @param {string[]} paths
-	 * @returns {Promise<{done: Promise<void>, changed: Set<string>, intact: Set<string>}>}
+	 * @returns {BrepOutcome}
 	 */
 	files (paths) {
 		let changed = new Set();
@@ -137,6 +147,9 @@ export default class Brep {
 
 	/**
 	 * Apply the script to multiple files determined by a glob
+	 * @param {string} [glob] - Glob pattern to match files
+	 * @returns {BrepOutcome}
+	 *
 	 */
 	async glob (glob = this.getFiles()) {
 		if (!glob) {

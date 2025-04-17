@@ -2,19 +2,20 @@
 
 _For versions < 0.0.8 see [bafr](https://www.npmjs.com/package/bafr)_
 
-[Online playground](https://projects.verou.me/brep/play/)
+[Online playground](https://brep.htex.app/play/)
 
-Ever written some complex find & replace operations in a text editor, `sed` or whatever, and wished you could save them somewhere and re-run them in the future?
+Ever written some complex find & replace operations in a text editor, `sed` or whatever, and wished you could save them somewhere and re-run them in the future in one go?
 This is exactly what brep _(**B**atch **Rep**lace)_ does!
 
-You write a _brep script_ (see syntax below), and then you apply it from the command-line like:
+You write a _brep script_ (see below), and then you apply it to any files you want from the command-line.
+Example:
 
 ```sh
 brep myscript.brep.toml src/**/*.html
 ```
 
-This will apply the script `myscript.brep.toml` to all HTML files in the `src` folder and its subfolders.
-You don’t need to specify the file paths multiple times if they don’t change, you can include them in your script as defaults (and still override them if needed).
+This will apply the script `myscript.brep.toml` to all HTML files in the `src` folder and its subfolders and overwrite each file with the result of the replacements.
+You can even include default file paths in the script itself, so that you don't have the specify them every time if they rarely change (and you can still override them if needed!).
 
 ## Contents
 
@@ -36,7 +37,8 @@ npm install -g brep
 
 ## Syntax
 
-There are three main syntaxes, each more appropriate for different use cases:
+Brep scripts are just data that follow a certain structure and in theory you could use any data format that supports hierarchical data.
+Out of the box, brep supports the following syntaxes, each with its own pros and cons:
 1. [TOML](https://toml.io/en/) when your strings are multiline or have weird characters and you want their boundaries to be very explicit
 2. [YAML](https://yaml.org/) when you want a more concise syntax for simple replacements
 3. [JSON](https://www.json.org/) is also supported. It’s not recommended for writing by hand but can be convenient as the output from other tools.
@@ -348,41 +350,92 @@ There is also the JS version of the CLI you can access as:
 
 ```js
 import brep from "brep/cli";
-await brep("script.yaml");
+let outcome = await brep("script.yaml");
 // Do stuff after script runs
+console.log(outcome);
 ```
+
+The script is passed as the first argument and every named argument is passed as an options object.
+It will read, parse, and run the script, process write the output to the files the CLI would, and return an object with various metadata about the run.
+
+Because this works exactly like the CLI, it is of limited utility if you want to actually process the files (or the script) further.
+In most cases, you probably want to use the `Brep` or `Replacer` classes instead.
+- The `Replacer` class is the parsed form of a script. You can feed it text and it will return the processed text, but it does not do any file I/O.
+- The `Brep` class will read a script, parse it, and apply it to one or more files, or raw text.
+
+### `Brep` class (Node.js-only)
+
+This takes care of reading script files, parsing them, creating `Replacer` instances (see below), and applying the Brep script to files.
+If you have your script as an object, you can use the constructor directly:
+
+```js
+import Brep from "brep";
+
+let brep = new Brep({
+	from: 'foo',
+	to: 'bar'
+}, {
+	paths: {
+		"foo.src.html": "foo.html"
+	}
+});
+```
+
+If your script lives in a file, you can use `Brep.fromPath()` to read it and parse it,
+then apply it to files or other input:
+
+```js
+import Brep from "brep";
+
+let brep = Brep.fromPath("script.yaml", {
+	paths: {
+		"foo.src.html": "foo.html"
+	}
+});
+```
+
+Instance methods:
+- `brep.text(content)`: Process a string and return the result as a string (internally calls `replacer.transform()`).
+- `brep.file(path [, outputPath])`: Process a file and write the results back (async).
+- `brep.files(paths)`: Process multiple files and write the results back
+- `brep.glob(pattern)`: Process multiple files and write the results back
 
 ### `Replacer` class (Browser-compatible)
 
 This is the core of brep and takes care of applying the replacements on strings of text.
 
 ```js
-import { Replacer } from "brep/replacer";
+import Replacer from "brep/replacer";
 ```
 
 or, in the browser:
 
 ```js
-import { Replacer } from "node_modules/brep/src/replacer.js";
+import Replacer from "node_modules/brep/src/replacer-core.js";
+```
+
+`Replacer.fromPath(path)` reads a script file and parses it into a `Replacer` instance.
+
+```js
+import Replacer from "brep/replacer";
+
+let replacer = await Replacer.fromPath("script.yaml");
+```
+
+If you already have the script as an object, you can use the constructor directly:
+
+```js
+import Replacer from "brep/replacer";
+let replacer = new Replacer({
+	from: 'foo',
+	to: 'bar'
+});
 ```
 
 Instance methods:
 - `new Replacer(script, parent)`: Create a new instance of the replacer. `script` is the script object, `parent` is the parent replacer (if any).
 - `replacer.transform(content)`: Process a string and return the result.
 
-### `Brep` class (Node.js-only)
-
-This takes care of reading script files, parsing them, creating `Replacer` instances, and applying the brep script to files.
-
-```js
-import Brep from "brep";
-```
-
-Instance methods:
-- `brep.text(content)`: Process a string (internally calls `replacer.transform()`).
-- `brep.file(path [, outputPath])`: Process a file and write the results back (async).
-- `brep.files(paths)`: Process multiple files and write the results back
-- `brep.glob(pattern)`: Process multiple files and write the results back
 
 ## Future plans
 
